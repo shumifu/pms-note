@@ -212,15 +212,17 @@
             margin-top: 5px !important;
         }
         
-        .toc-list li {
-            margin-bottom: 4px !important;
-            padding: 4px 10px;
+.toc-list li {
+            margin-bottom: 2px !important; /* ここを小さくしました */
+            padding: 3px 10px !important;  /* パディングも少し減らしてスッキリさせました */
             background-color: #fffdfd;
             border: 1px solid #fceee9;
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s;
-            font-size: 0.88rem;
+            font-size: 0.85rem;            /* フォントサイズも少しだけ小さく調整 */
+            list-style: none;              /* 念のため箇条書きの点を消す指定 */
+        }
         }
         
         .toc-list li:active {
