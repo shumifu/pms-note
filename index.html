@@ -80,31 +80,56 @@
         .status-text {
             font-size: 0.95rem;
             font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .next-period-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-weight: 500;
         }
 
         .date-inputs {
             margin-top: 10px;
-            padding-top: 10px;
+            padding-top: 15px;
             border-top: 1px dashed var(--primary-color);
             display: none;
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 4px;
+            font-weight: bold;
         }
 
         .date-inputs input {
-            padding: 6px;
+            width: 100%;
+            padding: 8px;
             border: 1px solid var(--accent-color);
-            border-radius: 4px;
-            margin-right: 5px;
+            border-radius: 6px;
             color: var(--text-color);
+            font-size: 0.9rem;
         }
 
         .btn-small {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+            font-weight: bold;
         }
 
         .toggle-sync-btn {
@@ -113,7 +138,7 @@
             color: var(--accent-color);
             font-size: 0.8rem;
             text-decoration: underline;
-            margin-top: 5px;
+            margin-top: 8px;
             cursor: pointer;
         }
 
@@ -161,7 +186,6 @@
             flex: 1;
         }
 
-        /* 箇条書き部分の行間・余白の調整 */
         .page-content ul {
             margin-left: 20px;
             margin-top: 4px;
@@ -189,8 +213,8 @@
         }
         
         .toc-list li {
-            margin-bottom: 4px !important; /* 行間をさらに狭く調整 */
-            padding: 4px 10px; /* 上下のパディングを縮小 */
+            margin-bottom: 4px !important;
+            padding: 4px 10px;
             background-color: #fffdfd;
             border: 1px solid #fceee9;
             border-radius: 6px;
@@ -265,21 +289,35 @@
 
     <div class="container">
         
+        <!-- 共有ステータスエリア -->
         <div class="status-box">
             <div class="status-badge" id="current-status-badge">現在の状況</div>
-            <div class="status-text" id="status-display">現在は「おだやか期（通常期）」です。</div>
+            <div class="status-text" id="status-display">データを読み込み中...</div>
+            <div class="next-period-text" id="next-period-display"></div>
             
-            <button class="toggle-sync-btn" onclick="toggleDateInput()">【彼女用】生理日の登録パネルを開く</button>
+            <button class="toggle-sync-btn" onclick="toggleDateInput()">【彼女用】生理日・周期の登録パネルを開く</button>
             
             <div class="date-inputs" id="date-input-panel">
-                <p style="font-size: 0.8rem; margin-bottom: 8px; color: #666;">前回の生理開始日を入力してください：</p>
-                <input type="date" id="period-date">
-                <button class="btn-small" onclick="updateStatusDemo()">登録</button>
+                <div class="input-group">
+                    <label for="period-date">① 前回の生理開始日</label>
+                    <input type="date" id="period-date">
+                </div>
+                <div class="input-group">
+                    <label for="period-cycle">② 平均生理周期 (何日おき？)</label>
+                    <input type="number" id="period-cycle" value="28" min="15" max="50">
+                </div>
+                <div class="input-group">
+                    <label for="period-duration">③ 生理中の日数 (何日間続く？)</label>
+                    <input type="number" id="period-duration" value="7" min="2" max="14">
+                </div>
+                <button class="btn-small" onclick="updateStatusDemo()">この内容で登録・共有する</button>
             </div>
         </div>
 
+        <!-- 冊子型説明書エリア -->
         <div class="book-container">
             
+            <!-- ページ1: 一般解説 -->
             <div class="page active">
                 <h2 class="page-title">PMS（月経前症候群）とは？</h2>
                 <div class="page-content">彼女のPMS（月経前症候群）は、女性ホルモンの急激な変化によって引き起こされる脳内の異常で、本人でもコントロールできません。
@@ -295,6 +333,7 @@
 <a href="https://www.jsog.or.jp/citizen/5716/" target="_blank" class="link-text">月経前症候群（premenstrual syndrome : PMS） - 公益社団法人 日本産科婦人科学会</a></div>
             </div>
 
+            <!-- ページ2: 目次 -->
             <div class="page">
                 <h2 class="page-title">目次</h2>
                 <div class="page-content">
@@ -314,6 +353,7 @@
                 </div>
             </div>
 
+            <!-- ページ3: はじめに -->
             <div class="page">
                 <h2 class="page-title">私のPMS完全説明書：はじめに</h2>
                 <div class="page-content">まず最初に伝えたいことがあります。
@@ -330,6 +370,7 @@
 責めるためではなく、お互いが少しでも気持ちよく過ごせる方法を一緒に見つけたいと思っています。</div>
             </div>
 
+            <!-- ページ4: 状態 -->
             <div class="page">
                 <h2 class="page-title">PMSの時の私はこんな状態です</h2>
                 <div class="page-content">普段なら気にならないことでも…
@@ -342,9 +383,10 @@
 </ul>
 例えるなら、<strong>「理性ではブレーキを踏んでいるのに、感情だけアクセルが全開になっている」</strong>ような感覚です。
 
-「落ち着けばいいじゃん」と思われるかもしれないけれど、私も一番そうしたいです。精度その時の私にはそれが本当に難しくなってしまいます。</div>
+「落ち着けばいいじゃん」と思われるかもしれないけれど、私も一番そうしたいです。それでもその時の私にはそれが本当に難しくなってしまいます。</div>
             </div>
 
+            <!-- ページ5: 一ずつらいこと -->
             <div class="page">
                 <h2 class="page-title">私が一番つらいこと</h2>
                 <div class="page-content">PMSでしんどい時に、
@@ -358,21 +400,23 @@
 そう言われると、<strong>「また理解してもらえなかった」</strong>という気持ちが強くなり、余計に苦しくなってしまいます。</div>
             </div>
 
+            <!-- ページ6: 誤解してほしくないこと -->
             <div class="page">
                 <h2 class="page-title">誤解してほしくないこと</h2>
                 <div class="page-content">私は、「PMSだから怒ってもいい」と言いたいわけではありません。
 
 落ち着いた後に、「言い過ぎたな」「ごめんね」と思ったことは、ちゃんと謝りたいと思っています。
 
-でも、PMS中は本当に感情をコントロールすることが難しいです。だから、その瞬間だけは、<strong>「悪意があって言っているわけじゃない」</strong>ということを思い出してもらえたら嬉しいです。</div>
+ただ、PMS中は本当に感情をコントロールすることが難しいです。だから、その瞬間だけは、<strong>「悪意があって言っているわけじゃない」</strong>ということを思い出してもらえたら嬉しいです。</div>
             </div>
 
+            <!-- ページ7: 嬉しいこと -->
             <div class="page">
                 <h2 class="page-title">この時期にしてもらえると嬉しいこと</h2>
                 <div class="page-content">この時期だけは、普段より少しだけ丁寧に接してもらえると、本当に安心できます。
 
 <ul>
-    <li>「今しんどい時期なんだね」と受け止めてくれること</li>
+    <li>「今しんどい時期んだね」と受け止めてくれること</li>
     <li>少しだけ優しく丁寧に接してくれること</li>
     <li>無理に理由を聞いたり、正そうとしないこと</li>
     <li>私自身もどうしようもなく苦しいことを理解しようとしてくれること</li>
@@ -381,13 +425,14 @@
 この時期の私は、正論よりも安心が必要です。「大丈夫だよ」「しんどいね」「味方だからね」そんな一言だけで、気持ちが落ち着くことがたくさんあります。</div>
             </div>
 
+            <!-- ページ8: 忙しいときは -->
             <div class="page">
                 <h2 class="page-title">もし忙しくて時間をかけられない時は</h2>
                 <div class="page-content">もちろん、忙しい日や余裕がない日があることも分かっています。だから、無理をしてほしいわけではありません。
 
 ただ、何も言わずに距離を置かれると、「嫌われたのかな」「もう面倒になったのかな」と不安がどんどん大きくなってしまいます。
 
-だから、もし時間をかけられない時は,
+だから、もし時間をかけられない時は、
 <div class="highlight-box">
 「今日は時間が取れないけど、嫌いになったわけじゃないよ」
 「ちゃんと支えたいと思ってるよ」
@@ -396,6 +441,7 @@
 そんなふうに、安心できる言葉を伝えてもらえると嬉しいです。その一言があるだけで、私は安心して待つことができます。</div>
             </div>
 
+            <!-- ページ9: お願いしたいこと -->
             <div class="page">
                 <h2 class="page-title">お願いしたいこと</h2>
                 <div class="page-content">PMSの時の私は、不安が大きくなってしまうので、安心するまで何度も気持ちを確認してしまうことがあります。
@@ -408,6 +454,7 @@
 だから、この時期だけは、<strong>正しさよりも安心を優先</strong>してもらえたら嬉しいです。</div>
             </div>
 
+            <!-- ページ10: 約束 -->
             <div class="page">
                 <h2 class="page-title">私からの約束</h2>
                 <div class="page-content">私は、PMSを理由に何をしても許してほしいとは思っていません。
@@ -421,6 +468,7 @@
 だから、PMSの最中だけは、少しだけ支えてもらえたら嬉しいです。</div>
             </div>
 
+            <!-- ページ11: 最後に -->
             <div class="page">
                 <h2 class="page-title">最後に</h2>
                 <div class="page-content">忙しい中で、こんなお願いをするのは申し訳ないと思っています。でも、私も好きでこうなっているわけではありません。
@@ -429,11 +477,12 @@
 
 だから、この説明書を読んで、「これは難しいな」「こうした方がお互いやりやすいかも」と思うことがあれば、遠慮なく教えてほしいです。
 
-一方的に我慢してほしいわけではなく、<strong>二人にとって一番いい付き合い方を一緒に見つけたい</strong>と思っています。
+一方的に我慢してほしいわけではなく、<strong>二人にとって一番いい付き付き合い方を一緒に見つけたい</strong>と思っています。
 
 PMSの私は、本来の私とは少し違います。だから、その数日だけは「今日はPMSでしんどい時なんだな」と思って、敵ではなく味方でいてくれたら嬉しいです。それだけで、私はすごく救われます。</div>
             </div>
 
+            <!-- ページナビゲーション -->
             <div class="navigation">
                 <button class="nav-btn" id="prev-btn" onclick="changePage(-1)" disabled>戻る</button>
                 <span class="page-counter" id="page-indicator">1 / 11</span>
@@ -444,155 +493,186 @@ PMSの私は、本来の私とは少し違います。だから、その数日�
     </div>
 
     <script>
-    // 💡【重要】ここにステップ2で取得したGASのウェブアプリURLを貼り付けてください！
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyYLyoF1cGP25SZytrpt7TVbSzHZbQa8PwyVpFFGzHr0u_yzHLzlyIkhwIvxgTH-Im73A/exec';
+        // 💡【重要】ここにあなたのGASのウェブアプリURLを貼り付けてください！
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyYLyoF1cGP25SZytrpt7TVbSzHZbQa8PwyVpFFGzHr0u_yzHLzlyIkhwIvxgTH-Im73A/exec';
 
-    // ページめくりの制御
-    let currentPage = 0;
-    const pages = document.querySelectorAll('.page');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const pageIndicator = document.getElementById('page-indicator');
+        let currentPage = 0;
+        const pages = document.querySelectorAll('.page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const pageIndicator = document.getElementById('page-indicator');
 
-    function updateNavigation() {
-        prevBtn.disabled = currentPage === 0;
-        if(currentPage === pages.length - 1) {
-            nextBtn.innerText = "最初へ";
-        } else {
-            nextBtn.innerText = "進む";
+        function updateNavigation() {
+            prevBtn.disabled = currentPage === 0;
+            if(currentPage === pages.length - 1) {
+                nextBtn.innerText = "最初へ";
+            } else {
+                nextBtn.innerText = "進む";
+            }
+            pageIndicator.innerText = `${currentPage + 1} / ${pages.length}`;
         }
-        pageIndicator.innerText = `${currentPage + 1} / ${pages.length}`;
-    }
 
-    function changePage(direction) {
-        if (currentPage === pages.length - 1 && direction === 1) {
+        function changePage(direction) {
+            if (currentPage === pages.length - 1 && direction === 1) {
+                pages[currentPage].classList.remove('active');
+                currentPage = 0;
+                pages[currentPage].classList.add('active');
+            } else {
+                pages[currentPage].classList.remove('active');
+                currentPage += direction;
+                pages[currentPage].classList.add('active');
+            }
+            updateNavigation();
+        }
+
+        function jumpToPage(pageIndex) {
             pages[currentPage].classList.remove('active');
-            currentPage = 0;
+            currentPage = pageIndex;
             pages[currentPage].classList.add('active');
-        } else {
-            pages[currentPage].classList.remove('active');
-            currentPage += direction;
-            pages[currentPage].classList.add('active');
-        }
-        updateNavigation();
-    }
-
-    function jumpToPage(pageIndex) {
-        pages[currentPage].classList.remove('active');
-        currentPage = pageIndex;
-        pages[currentPage].classList.add('active');
-        updateNavigation();
-    }
-
-    function toggleDateInput() {
-        const panel = document.getElementById('date-input-panel');
-        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
-    }
-
-    // 共通のステータス計算ロジック（生理周期を判定する計算機）
-    function calculateStatus(dateString) {
-        if (!dateString) {
-            document.getElementById('status-display').innerHTML = "📅 生理日がまだ登録されていません。";
-            return;
+            updateNavigation();
         }
 
-        const periodDate = new Date(dateString);
-        const today = new Date();
-        
-        today.setHours(0,0,0,0);
-        periodDate.setHours(0,0,0,0);
-        
-        const nextPeriodDate = new Date(periodDate);
-        nextPeriodDate.setDate(periodDate.getDate() + 28);
-        
-        const pmsStartDate = new Date(nextPeriodDate);
-        pmsStartDate.setDate(nextPeriodDate.getDate() - 10);
-
-        const statusDisplay = document.getElementById('status-display');
-        const badge = document.getElementById('current-status-badge');
-
-        // 1ヶ月以上前のデータだった場合、自動で現在の周期にシフトする処理
-        while (today >= nextPeriodDate) {
-            periodDate.setDate(periodDate.getDate() + 28);
-            nextPeriodDate.setDate(nextPeriodDate.getDate() + 28);
-            pmsStartDate.setDate(nextPeriodDate.getDate() - 10);
+        function toggleDateInput() {
+            const panel = document.getElementById('date-input-panel');
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
         }
 
-        if (today >= pmsStartDate && today < nextPeriodDate) {
-            statusDisplay.innerHTML = "⚠️ 現在【PMS期】の可能性が高いです。そっと見守り、安心させてあげてください。";
-            badge.style.backgroundColor = "#e08b7a";
-            badge.style.color = "white";
-        } else if (today >= periodDate && today < pmsStartDate) {
-            statusDisplay.innerHTML = "🩸 現在【生理中】の可能性があります。体調を気遣ってあげてください。";
-            badge.style.backgroundColor = "#c75a47";
-            badge.style.color = "white";
-        } else {
-            statusDisplay.innerHTML = "✨ 現在は【おだやか期（通常期）】です。";
-            badge.style.backgroundColor = "#f7d6d0";
-            badge.style.color = "var(--text-color)";
-        }
-        
-        document.getElementById('period-date').value = dateString;
-    }
+        // 📅 あなたの体質に合わせた高精度ステータス計算ロジック（修正版）
+        function calculateStatus(dateString, cycleDays, periodDuration) {
+            if (!dateString) {
+                document.getElementById('status-display').innerHTML = "📅 生理日がまだ登録されていません。";
+                return;
+            }
 
-    // アプリを開いた瞬間に、自動でスプレッドシートのデータを読み込む
-    window.addEventListener('load', () => {
-        if (GAS_URL.includes('ここに貼り付け')) {
-            return; 
+            const cycle = parseInt(cycleDays) || 28;
+            const duration = parseInt(periodDuration) || 7;
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            // 登録された前回の開始日
+            let currentPeriodStart = new Date(dateString);
+            currentPeriodStart.setHours(0,0,0,0);
+            
+            // 「今日が含まれる、または今日より未来の周期」に追いつくまでループ計算
+            // ループが終わったとき、currentPeriodStartは「直近（今日を含む最新）の生理開始日」になります
+            while (true) {
+                let nextCycleStart = new Date(currentPeriodStart);
+                nextCycleStart.setDate(currentPeriodStart.getDate() + cycle);
+                
+                // 次の周期の開始日よりも今日が後ろにある場合は、基準日を1周期進める
+                if (today >= nextCycleStart) {
+                    currentPeriodStart = nextCycleStart;
+                } else {
+                    break;
+                }
+            }
+
+            // 直近の開始日をベースに、次回の予定日を確定
+            let nextPeriodDate = new Date(currentPeriodStart);
+            nextPeriodDate.setDate(currentPeriodStart.getDate() + cycle);
+
+            // 【ロジック設定】
+            // ① 生理中判定：直近の開始日から指定日数分
+            const periodEndDate = new Date(currentPeriodStart);
+            periodEndDate.setDate(currentPeriodStart.getDate() + duration);
+
+            // ② PMS判定：次回の予定日の7日前から予定日前日まで
+            const pmsStartDate = new Date(nextPeriodDate);
+            pmsStartDate.setDate(nextPeriodDate.getDate() - 7);
+
+            const statusDisplay = document.getElementById('status-display');
+            const badge = document.getElementById('current-status-badge');
+            const nextDisplay = document.getElementById('next-period-display');
+
+            // 次回予定日のフォーマット
+            const yyyy = nextPeriodDate.getFullYear();
+            const mm = String(nextPeriodDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(nextPeriodDate.getDate()).padStart(2, '0');
+            nextDisplay.innerHTML = `次回の生理予定日：<strong>${yyyy}年${mm}月${dd}日</strong>`;
+
+            // 条件判定
+            if (today >= currentPeriodStart && today < periodEndDate) {
+                // 生理中
+                statusDisplay.innerHTML = "🩸 現在【生理中】です。体調や痛みを気遣ってあげてください。";
+                badge.style.backgroundColor = "#c75a47";
+                badge.style.color = "white";
+            } else if (today >= pmsStartDate && today < nextPeriodDate) {
+                // PMS期（予定日の1週間前）
+                statusDisplay.innerHTML = "⚠️ 現在【PMS期】の可能性が高いです。そっと見守り、安心させてあげてください。";
+                badge.style.backgroundColor = "#e08b7a";
+                badge.style.color = "white";
+            } else {
+                // それ以外
+                statusDisplay.innerHTML = "✨ 現在は「通常通りかわいい彼女です」";
+                badge.style.backgroundColor = "#f7d6d0";
+                badge.style.color = "var(--text-color)";
+            }
+            
+            // 入力欄に現在の登録値を保持
+            document.getElementById('period-date').value = dateString;
+            document.getElementById('period-cycle').value = cycle;
+            document.getElementById('period-duration').value = duration;
         }
-        
-        document.getElementById('status-display').innerHTML = "⏳ 最新の体調データを読み込み中...";
-        
-        fetch(GAS_URL)
-            .then(response => response.json())
-            .then(data => {
-                calculateStatus(data.date);
+
+        // 自動読み込み
+        window.addEventListener('load', () => {
+            if (GAS_URL.includes('ここに貼り付け')) return;
+            
+            document.getElementById('status-display').innerHTML = "⏳ 最新の体調データを読み込み中...";
+            
+            fetch(GAS_URL)
+                .then(response => response.json())
+                .then(data => {
+                    calculateStatus(data.date, data.cycle, data.period);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('status-display').innerHTML = "❌ データの読み込みに失敗しました。";
+                });
+        });
+
+        // 登録・データ送信
+        function updateStatusDemo() {
+            const dateInput = document.getElementById('period-date').value;
+            const cycleInput = document.getElementById('period-cycle').value;
+            const durationInput = document.getElementById('period-duration').value;
+
+            if(!dateInput || !cycleInput || !durationInput) {
+                alert("すべての項目を入力してください。");
+                return;
+            }
+
+            const submitButton = document.querySelector('#date-input-panel .btn-small');
+            submitButton.disabled = true;
+            submitButton.innerText = "登録中...";
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    date: dateInput,
+                    cycle: parseInt(cycleInput),
+                    period: parseInt(durationInput)
+                })
+            })
+            .then(() => {
+                alert("体調データを保存・共有しました！");
+                calculateStatus(dateInput, cycleInput, durationInput);
+                toggleDateInput();
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('status-display').innerHTML = "❌ データの読み込みに失敗しました。";
+                alert("通信エラーが発生しました。");
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerText = "この内容で登録・共有する";
             });
-    });
-
-    // 彼女が日付を登録したとき、スプレッドシートへ送信して保存する
-    function updateStatusDemo() {
-        const dateInput = document.getElementById('period-date').value;
-        if(!dateInput) {
-            alert("日付を選択してください。");
-            return;
         }
-
-        if (GAS_URL.includes('ここに貼り付け')) {
-            alert("エラー：GASのURLが設定されていません。");
-            return;
-        }
-
-        const submitButton = document.querySelector('#date-input-panel .btn-small');
-        submitButton.disabled = true;
-        submitButton.innerText = "登録中...";
-
-        fetch(GAS_URL, {
-            method: 'POST',
-            mode: 'no-cors', 
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ date: dateInput })
-        })
-        .then(() => {
-            alert("生理開始日を保存・共有しました！");
-            calculateStatus(dateInput);
-            toggleDateInput();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("通信エラーが発生しました。");
-        })
-        .finally(() => {
-            submitButton.disabled = false;
-            submitButton.innerText = "登録";
-        });
-    }
-</script>
+    </script>
 </body>
 </html>
