@@ -649,11 +649,11 @@ PMSの私は、本来の私とは少し違います。だから、その数日�
 
             fetch(GAS_URL, {
                 method: 'POST',
-                mode: 'no-cors', 
+                // mode: 'no-cors', を削除します
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'text/plain' // application/json から text/plain に変更
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     date: dateInput,
                     cycle: parseInt(cycleInput),
                     period: parseInt(durationInput)
