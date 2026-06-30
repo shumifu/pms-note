@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私のPMS完全説明書</title>
+    <style>
+        :root {
+            --primary-color: #f7d6d0; /* 優しいピンク */
+            --accent-color: #e08b7a;
+            --text-color: #4a4a4a;
+            --bg-color: #fcf9f8;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 共有ステータスエリア */
+        .status-box {
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(224,139,122,0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: #fcdcd7;
+            color: #c75a47;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .status-text {
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .date-inputs {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--primary-color);
+            display: none;
+        }
+
+        .date-inputs input {
+            padding: 6px;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            margin-right: 5px;
+            color: var(--text-color);
+        }
+
+        .btn-small {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .toggle-sync-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            text-decoration: underline;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        /* 冊子型ページエリア */
+        .book-container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 380px;
+        }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .page.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .page-content {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            white-space: pre-wrap;
+            flex: 1;
+        }
+
+        /* 箇条書き部分の行間・余白の調整 */
+        .page-content ul {
+            margin-left: 20px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        .page-content li {
+            margin-bottom: 2px;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* 目次ページのスタイル調整 */
+        .toc-title-sub {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .toc-list {
+            list-style: none !important;
+            margin-left: 0 !important;
+            margin-top: 5px !important;
+        }
+        
+        .toc-list li {
+            margin-bottom: 4px !important; /* 行間をさらに狭く調整 */
+            padding: 4px 10px; /* 上下のパディングを縮小 */
+            background-color: #fffdfd;
+            border: 1px solid #fceee9;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.88rem;
+        }
+        
+        .toc-list li:active {
+            background-color: var(--primary-color);
+        }
+
+        .highlight-box {
+            background-color: #fff5f4;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .link-text {
+            color: var(--accent-color);
+            word-break: break-all;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        /* ページナビゲーション */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+
+        .nav-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .nav-btn:disabled {
+            border-color: #e0e0e0;
+            color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:not(:disabled):active {
+            background-color: var(--primary-color);
+        }
+
+        .page-counter {
+            font-size: 0.85rem;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ふたりのための体調・PMSノート</h1>
+    </header>
+
+    <div class="container">
+        
+        <div class="status-box">
+            <div class="status-badge" id="current-status-badge">現在の状況</div>
+            <div class="status-text" id="status-display">現在は「おだやか期（通常期）」です。</div>
+            
+            <button class="toggle-sync-btn" onclick="toggleDateInput()">【彼女用】生理日の登録パネルを開く</button>
+            
+            <div class="date-inputs" id="date-input-panel">
+                <p style="font-size: 0.8rem; margin-bottom: 8px; color: #666;">前回の生理開始日を入力してください：</p>
+                <input type="date" id="period-date">
+                <button class="btn-small" onclick="updateStatusDemo()">登録</button>
+            </div>
+        </div>
+
+        <div class="book-container">
+            
+            <div class="page active">
+                <h2 class="page-title">PMS（月経前症候群）とは？</h2>
+                <div class="page-content">彼女のPMS（月経前症候群）は、女性ホルモンの急激な変化によって引き起こされる脳内の異常で、本人でもコントロールできません。
+
+イライラや情緒不安定は「わがまま」ではないため、責めたり理由を追及したりせず、「今はそういう時期なんだな」と割り切ってそっとしておくのが一番の薬です。
+
+<div class="highlight-box">
+<strong>💡 パートナーとしてできるサポート</strong>
+・否定や指摘をしない
+「なぜ怒っているのか」と論理的に理由を聞いたり、意見することは避けましょう。深く考えず、体調不良の一種として受け流すことが大切です。
+</div>
+詳しく解説されている参考サイト：
+<a href="https://www.jsog.or.jp/citizen/5716/" target="_blank" class="link-text">月経前症候群（premenstrual syndrome : PMS） - 公益社団法人 日本産科婦人科学会</a></div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">目次</h2>
+                <div class="page-content">
+                    <div class="toc-title-sub">私のPMS完全説明書</div>
+                    <p style="margin-bottom: 8px; font-size: 0.8rem; color: #888;">※見出しをタップするとそのページに飛べます</p>
+                    <ul class="toc-list">
+                        <li onclick="jumpToPage(2)">1. はじめに</li>
+                        <li onclick="jumpToPage(3)">2. PMSの時の私はこんな状態です</li>
+                        <li onclick="jumpToPage(4)">3. 私が一番つらいこと</li>
+                        <li onclick="jumpToPage(5)">4. 誤解してほしくないこと</li>
+                        <li onclick="jumpToPage(6)">5. この時期にしてもらえると嬉しいこと</li>
+                        <li onclick="jumpToPage(7)">6. もし忙しくて時間をかけられない時は</li>
+                        <li onclick="jumpToPage(8)">7. お願いしたいこと</li>
+                        <li onclick="jumpToPage(9)">8. 私からの約束</li>
+                        <li onclick="jumpToPage(10)">9. 最後に</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">私のPMS完全説明書：はじめに</h2>
+                <div class="page-content">まず最初に伝えたいことがあります。
+
+これは、「PMSだから何をしても許してほしい」というお願いではありません。
+
+私はPMSの時、自分でも
+「なんでこんなにイライラするんだろう」
+「こんなこと思いたくないのに」
+と思っています。
+
+思うように感情をコントロールできない時があります。だから、この説明書はあなたを傷つけたいから書いているのではなく、私自身も困っていることを知ってほしいという気持ちで書きました。
+
+責めるためではなく、お互いが少しでも気持ちよく過ごせる方法を一緒に見つけたいと思っています。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">PMSの時の私はこんな状態です</h2>
+                <div class="page-content">普段なら気にならないことでも…
+<ul>
+    <li>悲しくなる</li>
+    <li>不安になる</li>
+    <li>イライラする</li>
+    <li>「嫌われたかも」「もう好きじゃないのかな」と感じてしまう</li>
+    <li>頭では分かっているのに感情が止まらない</li>
+</ul>
+例えるなら、<strong>「理性ではブレーキを踏んでいるのに、感情だけアクセルが全開になっている」</strong>ような感覚です。
+
+「落ち着けばいいじゃん」と思われるかもしれないけれど、私も一番そうしたいです。精度その時の私にはそれが本当に難しくなってしまいます。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">私が一番つらいこと</h2>
+                <div class="page-content">PMSでしんどい時に、
+
+「なんで怒ってるの？」
+「そんなことで？」
+「気持ちの問題じゃない？」
+「考えすぎじゃない？」
+
+と言われることです。
+そう言われると、<strong>「また理解してもらえなかった」</strong>という気持ちが強くなり、余計に苦しくなってしまいます。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">誤解してほしくないこと</h2>
+                <div class="page-content">私は、「PMSだから怒ってもいい」と言いたいわけではありません。
+
+落ち着いた後に、「言い過ぎたな」「ごめんね」と思ったことは、ちゃんと謝りたいと思っています。
+
+でも、PMS中は本当に感情をコントロールすることが難しいです。だから、その瞬間だけは、<strong>「悪意があって言っているわけじゃない」</strong>ということを思い出してもらえたら嬉しいです。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">この時期にしてもらえると嬉しいこと</h2>
+                <div class="page-content">この時期だけは、普段より少しだけ丁寧に接してもらえると、本当に安心できます。
+
+<ul>
+    <li>「今しんどい時期なんだね」と受け止めてくれること</li>
+    <li>少しだけ優しく丁寧に接してくれること</li>
+    <li>無理に理由を聞いたり、正そうとしないこと</li>
+    <li>私自身もどうしようもなく苦しいことを理解しようとしてくれること</li>
+    <li>私の味方でいてくれること</li>
+</ul>
+この時期の私は、正論よりも安心が必要です。「大丈夫だよ」「しんどいね」「味方だからね」そんな一言だけで、気持ちが落ち着くことがたくさんあります。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">もし忙しくて時間をかけられない時は</h2>
+                <div class="page-content">もちろん、忙しい日や余裕がない日があることも分かっています。だから、無理をしてほしいわけではありません。
+
+ただ、何も言わずに距離を置かれると、「嫌われたのかな」「もう面倒になったのかな」と不安がどんどん大きくなってしまいます。
+
+だから、もし時間をかけられない時は,
+<div class="highlight-box">
+「今日は時間が取れないけど、嫌いになったわけじゃないよ」
+「ちゃんと支えたいと思ってるよ」
+「○日に会おうね」
+</div>
+そんなふうに、安心できる言葉を伝えてもらえると嬉しいです。その一言があるだけで、私は安心して待つことができます。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">お願いしたいこと</h2>
+                <div class="page-content">PMSの時の私は、不安が大きくなってしまうので、安心するまで何度も気持ちを確認してしまうことがあります。
+
+その時に、
+「ちゃんと寄り添ってるじゃん」
+「もう十分でしょ」
+と言われると、「分かってもらえなかった」という気持ちになって、さらに苦しくなってしまいます。
+
+だから、この時期だけは、<strong>正しさよりも安心を優先</strong>してもらえたら嬉しいです。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">私からの約束</h2>
+                <div class="page-content">私は、PMSを理由に何をしても許してほしいとは思っていません。
+落ち着いたら、
+
+<ul>
+    <li>言い過ぎたことはちゃんと謝ります。</li>
+    <li>必要なら、冷静に話し合いたいと思っています。</li>
+    <li>あなたの気持ちもしっかり聞きたいです。</li>
+</ul>
+だから、PMSの最中だけは、少しだけ支えてもらえたら嬉しいです。</div>
+            </div>
+
+            <div class="page">
+                <h2 class="page-title">最後に</h2>
+                <div class="page-content">忙しい中で、こんなお願いをするのは申し訳ないと思っています。でも、私も好きでこうなっているわけではありません。
+
+私は、あなただから甘えてしまうし、あなただから分かってほしいと思っています。
+
+だから、この説明書を読んで、「これは難しいな」「こうした方がお互いやりやすいかも」と思うことがあれば、遠慮なく教えてほしいです。
+
+一方的に我慢してほしいわけではなく、<strong>二人にとって一番いい付き合い方を一緒に見つけたい</strong>と思っています。
+
+PMSの私は、本来の私とは少し違います。だから、その数日だけは「今日はPMSでしんどい時なんだな」と思って、敵ではなく味方でいてくれたら嬉しいです。それだけで、私はすごく救われます。</div>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prev-btn" onclick="changePage(-1)" disabled>戻る</button>
+                <span class="page-counter" id="page-indicator">1 / 11</span>
+                <button class="nav-btn" id="next-btn" onclick="changePage(1)">進む</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    // 💡【重要】ここにステップ2で取得したGASのウェブアプリURLを貼り付けてください！
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyYLyoF1cGP25SZytrpt7TVbSzHZbQa8PwyVpFFGzHr0u_yzHLzlyIkhwIvxgTH-Im73A/exec';
+
+    // ページめくりの制御
+    let currentPage = 0;
+    const pages = document.querySelectorAll('.page');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pageIndicator = document.getElementById('page-indicator');
+
+    function updateNavigation() {
+        prevBtn.disabled = currentPage === 0;
+        if(currentPage === pages.length - 1) {
+            nextBtn.innerText = "最初へ";
+        } else {
+            nextBtn.innerText = "進む";
+        }
+        pageIndicator.innerText = `${currentPage + 1} / ${pages.length}`;
+    }
+
+    function changePage(direction) {
+        if (currentPage === pages.length - 1 && direction === 1) {
+            pages[currentPage].classList.remove('active');
+            currentPage = 0;
+            pages[currentPage].classList.add('active');
+        } else {
+            pages[currentPage].classList.remove('active');
+            currentPage += direction;
+            pages[currentPage].classList.add('active');
+        }
+        updateNavigation();
+    }
+
+    function jumpToPage(pageIndex) {
+        pages[currentPage].classList.remove('active');
+        currentPage = pageIndex;
+        pages[currentPage].classList.add('active');
+        updateNavigation();
+    }
+
+    function toggleDateInput() {
+        const panel = document.getElementById('date-input-panel');
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // 共通のステータス計算ロジック（生理周期を判定する計算機）
+    function calculateStatus(dateString) {
+        if (!dateString) {
+            document.getElementById('status-display').innerHTML = "📅 生理日がまだ登録されていません。";
+            return;
+        }
+
+        const periodDate = new Date(dateString);
+        const today = new Date();
+        
+        today.setHours(0,0,0,0);
+        periodDate.setHours(0,0,0,0);
+        
+        const nextPeriodDate = new Date(periodDate);
+        nextPeriodDate.setDate(periodDate.getDate() + 28);
+        
+        const pmsStartDate = new Date(nextPeriodDate);
+        pmsStartDate.setDate(nextPeriodDate.getDate() - 10);
+
+        const statusDisplay = document.getElementById('status-display');
+        const badge = document.getElementById('current-status-badge');
+
+        // 1ヶ月以上前のデータだった場合、自動で現在の周期にシフトする処理
+        while (today >= nextPeriodDate) {
+            periodDate.setDate(periodDate.getDate() + 28);
+            nextPeriodDate.setDate(nextPeriodDate.getDate() + 28);
+            pmsStartDate.setDate(nextPeriodDate.getDate() - 10);
+        }
+
+        if (today >= pmsStartDate && today < nextPeriodDate) {
+            statusDisplay.innerHTML = "⚠️ 現在【PMS期】の可能性が高いです。そっと見守り、安心させてあげてください。";
+            badge.style.backgroundColor = "#e08b7a";
+            badge.style.color = "white";
+        } else if (today >= periodDate && today < pmsStartDate) {
+            statusDisplay.innerHTML = "🩸 現在【生理中】の可能性があります。体調を気遣ってあげてください。";
+            badge.style.backgroundColor = "#c75a47";
+            badge.style.color = "white";
+        } else {
+            statusDisplay.innerHTML = "✨ 現在は【おだやか期（通常期）】です。";
+            badge.style.backgroundColor = "#f7d6d0";
+            badge.style.color = "var(--text-color)";
+        }
+        
+        document.getElementById('period-date').value = dateString;
+    }
+
+    // アプリを開いた瞬間に、自動でスプレッドシートのデータを読み込む
+    window.addEventListener('load', () => {
+        if (GAS_URL.includes('ここに貼り付け')) {
+            return; 
+        }
+        
+        document.getElementById('status-display').innerHTML = "⏳ 最新の体調データを読み込み中...";
+        
+        fetch(GAS_URL)
+            .then(response => response.json())
+            .then(data => {
+                calculateStatus(data.date);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('status-display').innerHTML = "❌ データの読み込みに失敗しました。";
+            });
+    });
+
+    // 彼女が日付を登録したとき、スプレッドシートへ送信して保存する
+    function updateStatusDemo() {
+        const dateInput = document.getElementById('period-date').value;
+        if(!dateInput) {
+            alert("日付を選択してください。");
+            return;
+        }
+
+        if (GAS_URL.includes('ここに貼り付け')) {
+            alert("エラー：GASのURLが設定されていません。");
+            return;
+        }
+
+        const submitButton = document.querySelector('#date-input-panel .btn-small');
+        submitButton.disabled = true;
+        submitButton.innerText = "登録中...";
+
+        fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ date: dateInput })
+        })
+        .then(() => {
+            alert("生理開始日を保存・共有しました！");
+            calculateStatus(dateInput);
+            toggleDateInput();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("通信エラーが発生しました。");
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.innerText = "登録";
+        });
+    }
+</script>
+</body>
+</html>
